@@ -1,0 +1,398 @@
+---
+title: "Tarea 3"
+author: "Melany Waldisperg"
+date: "16 de septiembre del 2018"
+output: 
+  pdf_document:
+    fig_width: 5
+    fig_height: 5
+    fig_caption: true
+    highlight: tango
+bibliography: Biblio.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,warning = FALSE,message = FALSE)
+library(readr)
+library(tidyverse)
+library(rmarkdown)
+library(knitr)
+library(broom)
+
+pollutants <- read_csv("C:/Users/Usuario MSI/Desktop/segundo semestre 2018/Curso R 1/Tarea 2/mussel-watch/pollutants.csv")
+histopaths <- read_csv("C:/Users/Usuario MSI/Desktop/segundo semestre 2018/Curso R 1/Tarea 2/mussel-watch/histopaths.csv")
+pollutants1<-pollutants %>% dplyr::select(scientific_name, parameter, result, units, general_location, specific_location, fiscal_year) 
+histopaths1<-histopaths %>% dplyr::select(species_name, general_location, specific_location, latitude, longitude, fiscal_year, gonadal_index, sex, length, digestive_tubule_atrophy) %>% rename(scientific_name=species_name)
+
+
+Tarea<- histopaths1 %>% full_join(pollutants1) 
+
+Tarea1<- Tarea %>% filter(!is.na(parameter)) %>% filter(!is.na(result))%>% filter(result != 0.00)%>% filter(!is.na(digestive_tubule_atrophy)) %>% filter(!is.na(length))%>% filter(sex != "Unknown")%>% filter(fiscal_year != 2006)
+
+
+C1<-Tarea1 %>% filter(parameter == "C1-Naphthalenes" | parameter == "C1-Phenanthrenes_Anthracenes"| parameter == "C1-Fluorenes" | parameter == "C1-Dibenzothiophenes" | parameter == "C1-Chrysenes"| parameter == "C1-Fluoranthenes_Pyrenes") %>% mutate(Contaminante=c("C2")) 
+C2<-Tarea1 %>% filter(parameter == "C2-Naphthalenes" | parameter == "C2-Phenanthrenes_Anthracenes"| parameter == "C2-Fluorenes" | parameter == "C2-Dibenzothiophenes" | parameter == "C2-Chrysenes") %>% mutate(Contaminante=c("C2"))
+C3<-Tarea1 %>% filter(parameter == "C3-Naphthalenes" | parameter == "C3-Phenanthrenes_Anthracenes"| parameter == "C3-Fluorenes" | parameter == "C3-Dibenzothiophenes" | parameter == "C3-Chrysenes") %>% mutate(Contaminante=c("C3"))
+C4<-Tarea1 %>% filter(parameter == "C4-Naphthalenes" | parameter == "C4-Phenanthrenes_Anthracenes"| parameter == "C4-Chrysenes") %>% mutate(Contaminante=c("C4"))
+Benzo<-Tarea1 %>% filter(parameter == "Benz(a)anthracene" | parameter == "Benzo(a)pyrene"| parameter == "Benzo(b)fluoranthene"| parameter == "Benzo(e)pyrene"| parameter == "Benzo(g,h,i)perylene"| parameter == "Benzo(k)fluoranthene") %>% mutate(Contaminante=c("Benzo"))
+M<- Tarea1 %>% filter(parameter == "1-Methylnaphthalene"|parameter == "1-Methylphenanthrene"|parameter == "2-Methylnaphthalene")%>% mutate(Contaminante=c("M"))
+PCB <- Tarea1 %>% filter(parameter == "PCB101_90"|parameter == "PCB105"|parameter == "PCB118"|parameter == "PCB128"|parameter == "PCB138_160"|parameter == "PCB153_132_168"|parameter == "PCB170_190"|parameter == "PCB18"|parameter == "PCB180"|parameter == "PCB187"|parameter == "PCB195_208"|parameter == "PCB206"|parameter == "PCB209"|parameter == "PCB28"|parameter == "PCB44"|parameter == "PCB52"|parameter == "PCB66"|parameter == "PCB8_5")%>% mutate(Contaminante=c("PCB"))
+Resto1<- Tarea1 %>% filter(parameter=="Alpha-Hexachlorocyclohexane")%>% mutate(Contaminante = c("Alpha-Hexachlorocyclohexane"))
+Resto2<- Tarea1 %>% filter(parameter=="Beta-Hexachlorocyclohexane")%>% mutate(Contaminante = c("Beta-Hexachlorocyclohexane"))
+Resto3<- Tarea1 %>% filter(parameter== "Biphenyl" )%>% mutate(Contaminante = c("Biphenyl"))
+Resto4<- Tarea1 %>% filter(parameter== "Anthracene")%>% mutate(Contaminante = c("Anthracene"))
+Resto5<- Tarea1 %>% filter(parameter=="Alpha-Chlordane")%>% mutate(Contaminante = c("Alpha-Chlordane"))
+Resto6<- Tarea1 %>% filter(parameter=="Sample wet weight")%>% mutate(Contaminante = c("Sample wet weight"))
+Resto7<- Tarea1 %>% filter(parameter== "Acenaphthene")%>% mutate(Contaminante = c("Acenaphthene"))
+Resto8<- Tarea1 %>% filter(parameter==  "Acenaphthylene")%>% mutate(Contaminante = c("Acenaphthylene"))
+Resto9<- Tarea1 %>% filter(parameter== "Sample dry weight")%>% mutate(Contaminante = c("Sample dry weight"))
+Resto11<- Tarea1 %>% filter(parameter=="1,6,7-Trimethylnaphthalene")%>% mutate(Contaminante = c("1,6,7-Trimethylnaphthalene"))
+Resto12<- Tarea1 %>% filter(parameter== "Trans-Nonachlor")%>% mutate(Contaminante = c("Trans-Nonachlor"))
+Resto13<- Tarea1 %>% filter(parameter== "4,4'-DDE")%>% mutate(Contaminante = c("4,4'-DDE"))
+Resto14<- Tarea1 %>% filter(parameter==  "4,4'-DDD")%>% mutate(Contaminante = c("4,4'-DDD"))
+Resto15<- Tarea1 %>% filter(parameter==  "Sample percent wet weight")%>% mutate(Contaminante = c("Sample percent wet weight"))
+Resto16<- Tarea1 %>% filter(parameter=="Percent lipid dry weight")%>% mutate(Contaminante = c("Percent lipid dry weight"))
+Resto17<- Tarea1 %>% filter(parameter== "Pyrene")%>% mutate(Contaminante = c("Pyrene"))
+Resto18<- Tarea1 %>% filter(parameter=="4,4'-DDT")%>% mutate(Contaminante = c("4,4'-DDT"))
+Resto19<- Tarea1 %>% filter(parameter== "Pentachloroanisole")%>% mutate(Contaminante = c("Pentachloroanisole"))
+Resto21<- Tarea1 %>% filter(parameter=="Oxychlordane")%>% mutate(Contaminante = c("Oxychlordane"))
+Resto22<- Tarea1 %>% filter(parameter== "Perylene")%>% mutate(Contaminante = c("Perylene"))
+Resto23<- Tarea1 %>% filter(parameter== "Phenanthrene")%>% mutate(Contaminante = c("Phenanthrene"))
+Resto24<- Tarea1 %>% filter(parameter=="Sample percent dry weight")%>% mutate(Contaminante = c("Sample percent dry weight"))
+Resto25<- Tarea1 %>% filter(parameter== "2,4'-DDT")%>% mutate(Contaminante = c("2,4'-DDT"))
+Resto26<- Tarea1 %>% filter(parameter== "2,4'-DDE")%>% mutate(Contaminante = c("2,4'-DDE"))
+Resto27<- Tarea1 %>% filter(parameter=="Dibenzothiophene")%>% mutate(Contaminante = c("Dibenzothiophene"))
+Resto28<- Tarea1 %>% filter(parameter== "Heptachlor-Epoxide")%>% mutate(Contaminante = c("Heptachlor-Epoxide"))
+Resto29<- Tarea1 %>% filter(parameter== "Gamma-Chlordane")%>% mutate(Contaminante = c("Gamma-Chlordane"))
+Resto31<- Tarea1 %>% filter(parameter=="Mirex")%>% mutate(Contaminante = c("Mirex"))
+Resto32<- Tarea1 %>% filter(parameter== "Dibenzo[a,h]anthracene")%>% mutate(Contaminante = c("Dibenzo[a,h]anthracene"))
+Resto33<- Tarea1 %>% filter(parameter=="Fluorene")%>% mutate(Contaminante = c("Fluorene"))
+Resto34<- Tarea1 %>% filter(parameter== "Dieldrin")%>% mutate(Contaminante = c("Dieldrin"))
+Resto35<- Tarea1 %>% filter(parameter=="Chrysene")%>% mutate(Contaminante = c("Chrysene"))
+Resto36<- Tarea1 %>% filter(parameter=="Naphthalene")%>% mutate(Contaminante = c("Naphthalene"))
+Resto37<- Tarea1 %>% filter(parameter== "2,4'-DDD")%>% mutate(Contaminante = c("2,4'-DDD"))
+Resto38<- Tarea1 %>% filter(parameter== "Hexachlorobenzene")%>% mutate(Contaminante = c("Hexachlorobenzene"))
+Resto39<- Tarea1 %>% filter(parameter=="Fluoranthene")%>% mutate(Contaminante = c("Fluoranthene"))
+Resto41<- Tarea1 %>% filter(parameter=="Cis-Nonachlor")%>% mutate(Contaminante = c("Cis-Nonachlor"))
+Resto42<- Tarea1 %>% filter(parameter=="Gamma-Hexachlorocyclohexane")%>% mutate(Contaminante = c("Gamma-Hexachlorocyclohexane"))
+Resto43<- Tarea1 %>% filter(parameter=="Endosulfan II")%>% mutate(Contaminante = c("Endosulfan II"))
+Resto44<- Tarea1 %>% filter(parameter== "2,6-Dimethylnaphthalene")%>% mutate(Contaminante = c("2,6-Dimethylnaphthalene"))
+Resto45<- Tarea1 %>% filter(parameter=="Indeno[1,2,3-c,d]pyrene")%>% mutate(Contaminante = c("Indeno[1,2,3-c,d]pyrene"))
+Resto46<- Tarea1 %>% filter(parameter=="Chlorpyrifos")%>% mutate(Contaminante = c("Chlorpyrifos"))
+Resto47<- Tarea1 %>% filter(parameter=="Arsenic")%>% mutate(Contaminante = c("Arsenic"))
+Resto48<- Tarea1 %>% filter(parameter== "Zinc")%>% mutate(Contaminante = c("Zinc"))
+Resto49<- Tarea1 %>% filter(parameter=="Aluminum")%>% mutate(Contaminante = c("Aluminum"))
+Resto51<- Tarea1 %>% filter(parameter=="Silver")%>% mutate(Contaminante = c("Silver"))
+Resto52<- Tarea1 %>% filter(parameter=="Selenium")%>% mutate(Contaminante = c("Selenium"))
+Resto53<- Tarea1 %>% filter(parameter=="Tin")%>% mutate(Contaminante = c("Tin"))
+Resto54<- Tarea1 %>% filter(parameter== "Lead")%>% mutate(Contaminante = c("Lead"))
+Resto55<- Tarea1 %>% filter(parameter== "Manganese")%>% mutate(Contaminante = c("Manganese"))
+Resto56<- Tarea1 %>% filter(parameter=="Iron")%>% mutate(Contaminante = c("Iron"))
+Resto57<- Tarea1 %>% filter(parameter=="Copper")%>% mutate(Contaminante = c("Copper"))
+Resto58<- Tarea1 %>% filter(parameter== "Chromium")%>% mutate(Contaminante = c("Chromium"))
+Resto59<- Tarea1 %>% filter(parameter== "Mercury")%>% mutate(Contaminante = c("Mercury"))
+Resto61<- Tarea1 %>% filter(parameter== "Nickel")%>% mutate(Contaminante = c("Nickel"))
+Resto62<- Tarea1 %>% filter(parameter=="Cadmium")%>% mutate(Contaminante = c("Cadmium"))
+Resto63<- Tarea1 %>% filter(parameter== "Tributyltin")%>% mutate(Contaminante = c("Tributyltin"))
+Resto64<- Tarea1 %>% filter(parameter=="1,2,4,5-Tetrachlorobenzene")%>% mutate(Contaminante = c("1,2,4,5-Tetrachlorobenzene"))
+Resto65<- Tarea1 %>% filter(parameter=="1,2,3,4-Tetrachlorobenzene")%>% mutate(Contaminante = c("1,2,3,4-Tetrachlorobenzene"))
+Resto66<- Tarea1 %>% filter(parameter== "Dibutyltin")%>% mutate(Contaminante = c("Dibutyltin"))
+Resto67<- Tarea1 %>% filter(parameter== "Heptachlor")%>% mutate(Contaminante = c("Heptachlor"))
+Resto68<- Tarea1 %>% filter(parameter=="Monobutyltin")%>% mutate(Contaminante = c("Monobutyltin"))
+Resto69<- Tarea1 %>% filter(parameter== "Endosulfan I")%>% mutate(Contaminante = c("Endosulfan I"))
+Resto71<- Tarea1 %>% filter(parameter== "Tetrabutyltin")%>% mutate(Contaminante = c("Tetrabutyltin"))
+Resto72<- Tarea1 %>% filter(parameter=="Pentachlorobenzene")%>% mutate(Contaminante = c("Pentachlorobenzene"))
+Resto73<- Tarea1 %>% filter(parameter== "Endrin")%>% mutate(Contaminante = c("Endrin"))
+Resto74<- Tarea1 %>% filter(parameter== "Aldrin")%>% mutate(Contaminante = c("Aldrin"))
+Resto75<- Tarea1 %>% filter(parameter=="Delta-Hexachlorocyclohexane") %>% mutate(Contaminante = c("Delta-Hexachlorocyclohexane"))
+
+a1<- C1 %>% full_join(C2)
+a2<- a1 %>% full_join(C3)
+a3<- a2 %>% full_join(C4)
+a4<- a3 %>% full_join(Benzo)
+a5<- a4 %>% full_join(M)
+a6<- a5 %>% full_join(PCB)
+a7<- a6 %>% full_join(Resto1)
+a8<- a7 %>% full_join(Resto2)
+a9<- a8 %>% full_join(Resto3)
+a10<- a9 %>% full_join(Resto4)
+a11<- a10 %>% full_join(Resto5)
+a12<- a11 %>% full_join(Resto6)
+a13<- a12 %>% full_join(Resto7)
+a14<- a13 %>% full_join(Resto8)
+a15<- a14 %>% full_join(Resto9)
+a16<- a15 %>% full_join(Resto11)
+a17<- a16 %>% full_join(Resto12)
+a18<- a17 %>% full_join(Resto13)
+a19<- a18 %>% full_join(Resto14)
+a20<- a19 %>% full_join(Resto15)
+a21<- a20 %>% full_join(Resto16)
+a22<- a21 %>% full_join(Resto17)
+a23<- a22 %>% full_join(Resto18)
+a24<- a23 %>% full_join(Resto19)
+a25<- a24 %>% full_join(Resto21)
+a26<- a25 %>% full_join(Resto22)
+a27<- a26 %>% full_join(Resto23)
+a28<- a27 %>% full_join(Resto24)
+a29<- a28 %>% full_join(Resto25)
+a30<- a29 %>% full_join(Resto26)
+a31<- a30 %>% full_join(Resto27)
+a32<- a31 %>% full_join(Resto28)
+a33<- a32 %>% full_join(Resto29)
+a34<- a33 %>% full_join(Resto31)
+a35<- a34 %>% full_join(Resto32)
+a36<- a35 %>% full_join(Resto33)
+a37<- a36 %>% full_join(Resto34)
+a38<- a37 %>% full_join(Resto35)
+a39<- a38 %>% full_join(Resto36)
+a40<- a39 %>% full_join(Resto37)
+a41<- a40 %>% full_join(Resto38)
+a42<- a41 %>% full_join(Resto39)
+a43<- a42 %>% full_join(Resto41)
+a44<- a43 %>% full_join(Resto42)
+a45<- a44 %>% full_join(Resto43)
+a46<- a45 %>% full_join(Resto44)
+a47<- a46 %>% full_join(Resto45)
+a48<- a47 %>% full_join(Resto46)
+a49<- a48 %>% full_join(Resto47)
+a50<- a49 %>% full_join(Resto48)
+a51<- a50 %>% full_join(Resto49)
+a52<- a51 %>% full_join(Resto51)
+a53<- a52 %>% full_join(Resto52)
+a54<- a53 %>% full_join(Resto53)
+a55<- a54 %>% full_join(Resto54)
+a56<- a55 %>% full_join(Resto55)
+a57<- a56 %>% full_join(Resto56)
+a58<- a57 %>% full_join(Resto57)
+a59<- a58 %>% full_join(Resto58)
+a60<- a59 %>% full_join(Resto59)
+a61<- a60 %>% full_join(Resto61)
+a62<- a61 %>% full_join(Resto62)
+a63<- a62 %>% full_join(Resto63)
+a64<- a63 %>% full_join(Resto64)
+a65<- a64 %>% full_join(Resto65)
+a66<- a65 %>% full_join(Resto66)
+a67<- a66 %>% full_join(Resto67)
+a68<- a67 %>% full_join(Resto68)
+a69<- a68 %>% full_join(Resto69)
+a70<- a69 %>% full_join(Resto71)
+a71<- a70 %>% full_join(Resto72)
+a72<- a71 %>% full_join(Resto73)
+a73<- a72 %>% full_join(Resto74)
+a74<- a73 %>% full_join(Resto75)
+
+a<-a74 %>%  dplyr::select(fiscal_year, general_location, result, units, Contaminante, digestive_tubule_atrophy) %>% filter(fiscal_year==1995) %>% mutate("Año"= c("1995"))
+b<-a74 %>%  dplyr::select(fiscal_year, general_location, result, units, Contaminante, digestive_tubule_atrophy)%>% filter(fiscal_year==1996)%>% mutate("Año"= c("1996"))
+c<-a74 %>%  dplyr::select(fiscal_year, general_location, result, units, Contaminante, digestive_tubule_atrophy)%>% filter(fiscal_year==1997)%>% mutate("Año"= c("1997"))
+d<-a74 %>%  dplyr::select(fiscal_year, general_location, result, units, Contaminante, digestive_tubule_atrophy) %>% filter(fiscal_year==1998)%>% mutate("Año"= c("1998"))
+abcd<-a %>% full_join(b)
+abcd1<-abcd %>% full_join(b)
+abcd2<-abcd1 %>% full_join(c)
+abcd3<-abcd2 %>% full_join(d)
+
+#Promedio y desviación estándar del tamaño de la concha por sexo
+Tarea6<-Tarea1 %>%  dplyr::select(length, sex)  %>% group_by(sex) %>% summarise (Promedio=round(mean(length),2), DE=round(sd(length),2))
+
+#Promedio y desviación estándar de la atrofia tubular digestiva por sexo
+Tarea7<-Tarea1 %>%  dplyr::select(digestive_tubule_atrophy, sex)  %>% group_by(sex) %>% summarise (Promedio=round(mean(digestive_tubule_atrophy),2), DE=round(sd(digestive_tubule_atrophy),2))
+
+```
+
+##Introducción 
+
+Durante este estudio se realizó un análisis de la base de datos del programa "Mussel Watch", disponible en la página web www.kaggle.com. El programa "Mussel Watch" consiste en el monitoreo de contaminantes en bivalvos para Estados Unidos desde 1986. Este programa tiene el fin de reunir información para evaluar el estado ambiental, mediante el análisis del taxa bivalvos conocidos mundialmente como bioindicadores [@hedouin2011; @waykar2012]. En este contexto, los objetivos de este trabajo son determinar si el tamaño y estado de los bivalvos se correlaciona con el sexo, determinar las localidades más contaminadas y evidenciar si el estado de los bivalvos se correlaciona con el estado ambiental. Además, se espera encontrar bivalvos en peor estado, en localidades más contaminadas y durante años con mayor número de contaminantes.
+
+##Metodología
+
+Para poner a prueba nuestra hipótesis se seleccionaron 9 variables del listado disponible en la base de datos descargada, que incluyeron: especie, localidad, año, sexo, largo de la valva, atrofia tubular digestiva, tipo de contaminante, valor del contaminante y unidad de medida del contaminante. Posteriormente, se seleccionaron los años con mayor cantidad de datos disponibles (1995-1998) y se clasificaron los contaminantes en 3 grupos según su unidad de medida (ng/dry g, ng/dry g o L y ng Sn/dry g). Una vez filtrada la información seleccionada se terminó trabajando con información de una sola especie de bivalvo, denominado en la base de datos como "Dreissena". Las variables descriptivas del estado de los bivalvos fueron largo de la valva y atrofia tubular digestiva, mientras que, la variable descriptiva del estado ambiental fue la concentración de contaminantes. Por último, se realizó el análisis de los datos en RStudio con los paquetes "tidyverse", "knitr", "readr", "broom"  y "rmarkdown" [@Tidy; @readr; @R;  @broom; @knitr;   @rmarkdown]
+
+##Resultados y discusión
+
+Con el fin de evidenciar diferencias potenciales en la captación de contaminantes por sexo explicadas por diferencias de tamaño, se realizó un analisis comparativo donde no se obtuvo diferencias significativas entre hembras y machos. El largo promedio fue igual a `r (Tarea6$Promedio)` y la desviación estándar fue de `r (Tarea6$DE)`, para hembras y machos respectivamente (Fig. 1). Además, el modelo con mejor ajuste para explicar el largo de la valva contenía el sexo de los ejemplares como única variable explicativa (Tabla 1). Al evaluar la existencia de diferencias en el estado de los ejemplares según el sexo, no se encontraron diferencias estadísticamente significativas. La atrofia tubular digestiva promedio fue igual a `r (Tarea7$Promedio)` y la desviación estándar fue de `r (Tarea7$DE)`, para hembras y machos respectivamente (Fig. 2). Nuevamente, el modelo con mejor ajuste para explicar, en este caso, la atrofia tubular digestiva contenía el sexo de los ejemplares como única variable explicativa (Tabla 2). Por otro lado, las localidades con mayor cantidad de contaminantes fueron el Lago Michigan para los tres grupos de contaminantes y ,además, el Lago Erie para el grupo contaminante 3 (Fig. 4, 6 y 8). Sin embargo, al comparar las gráficas de las concentraciones de contaminantes (Fig. 4, 6 y 8) con las de valores de atrofia tubular digestiva (Fig. 3, 5 y 7) no se evidenció una correlación del estado de los bivalvos con el estado ambiental. Por el contrario, el modelo obtenido con mejor ajuste a la concentración de contaminantes fue aquel que contenía la atrofia tubular digestiva de los ejemplares como única variable explicativa (Tabla 3, Fig. 9). Según la gráfica de la predicción de este último modelo se esperaría un incremento en los niveles de contaminante ambiental al aumentar la atrofia tubular digestiva (fig. 9). Sin embargo, hay que tener cuidado al analizar estos últimos resultados entregados por el modelo, ya que, no se están tomando en consideración los años y las localidades que parecen incrementar la incertidumbre que se ve reflejada en las figuras 3, 4, 5, 6, 7 y 8. Además, la falta de información para ciertos años y localidades podría estar alterando los resultados.
+
+##Conclusión
+
+El análisis realizado en el presente estudio con la base de datos "Mussel Watch" no nos permitió sustentar la hipótesis planteada, producto de diferencias en los resultados obtenidos mediante diferentes metodologías de análisis de datos. 
+
+##Anexos
+
+
+###Figuras
+
+
+```{r}
+#boxplot del tamaño de la concha por sexo
+ggplot(Tarea1, aes(x=sex, y=length))+geom_boxplot()+theme_classic()+labs(x = "Sexo",y = "Largo de la valva")
+```
+
+```{r,fig.cap="Figura 2. Gráfico de cajas con dispersión de puntos de la atrofia tubular digestiva vs el sexo."}
+Tarea3<-a74 %>%  dplyr::select(sex, fiscal_year, digestive_tubule_atrophy,length, general_location) 
+ggplot(Tarea3, aes(x=sex, y=digestive_tubule_atrophy))+geom_boxplot()+ geom_jitter(alpha=0.05)+theme_classic()+labs(x = "Sexo",y = "Atrofia tubular digestiva")
+```
+
+```{r,fig.cap="Figura 3. Niveles de atrofia tubular digestiva para el grupo contaminante 1 por año y localidad."}
+Tareafinal1<-abcd3 %>%  dplyr::select(Año, general_location, result, units, digestive_tubule_atrophy)%>% filter(units == "ng/dry g") 
+ggplot(Tareafinal1) + 
+  geom_bar(aes(general_location, digestive_tubule_atrophy, fill=Año), position="dodge", stat="identity")  +
+  labs(x = "Localidad",y = "Atrofia tubular digestiva")+theme_classic()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+```
+
+```{r,fig.cap="Figura 4. Concentración de contaminantes del grupo contaminante 1 por año y localidad."}
+Tareafinal1<-abcd3 %>%  dplyr::select(Año, general_location, result, units)%>% filter(units == "ng/dry g") 
+ggplot(Tareafinal1) + 
+  geom_bar(aes(general_location, result, fill=Año), position="dodge", stat="identity")  +
+  labs(x = "Localidad",y = "Valor contaminante 1 (ng/dry g)")+theme_classic()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+```
+
+```{r,fig.cap="Figura 5. Niveles de atrofia tubular digestiva para el grupo contaminante 2 por año y localidad."}
+Tareafinal1<-abcd3 %>%  dplyr::select(Año, general_location, result, units, digestive_tubule_atrophy)%>% filter(units == "ng/dry g or L") 
+ggplot(Tareafinal1) + 
+  geom_bar(aes(general_location, digestive_tubule_atrophy, fill=Año), position="dodge", stat="identity")  +
+  labs(x = "Localidad",y = "Atrofia tubular digestiva")+theme_classic()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+```
+
+```{r,fig.cap="Figura 6. Concentración de contaminantes del grupo contaminante 2 por año y localidad."}
+Tareafinal2<-abcd3 %>%  dplyr::select(Año, general_location, result, units)%>% filter(units == "ng/dry g or L") 
+ggplot(Tareafinal2) + 
+  geom_bar(aes(general_location, result, fill=Año), position="dodge", stat="identity")  +
+  labs(x = "Localidad",y = "Valor contaminante 2 (ng/dry g or L)")+theme_classic()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+```
+
+```{r,fig.cap="Figura 7. Niveles de atrofia tubular digestiva para el grupo contaminante 3 por año y localidad."}
+Tareafinal1<-abcd3 %>%  dplyr::select(Año, general_location, result, units, digestive_tubule_atrophy)%>% filter(units == "ng Sn/dry g") 
+ggplot(Tareafinal1) + 
+  geom_bar(aes(general_location, digestive_tubule_atrophy, fill=Año), position="dodge", stat="identity")  +
+  labs(x = "Localidad",y = "Atrofia tubular digestiva")+theme_classic()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+```
+
+```{r,fig.cap="Figura 8. Concentración de contaminantes del grupo contaminante 3 por año y localidad."}
+Tareafinal3<-abcd3 %>%  dplyr::select(Año, general_location, result, units)%>% filter(units == "ng Sn/dry g") 
+ggplot(Tareafinal3) + 
+  geom_bar(aes(general_location, result, fill=Año), position="dodge", stat="identity")  +
+  labs(x = "Localidad",y = "Valor contaminante 3 (ng Sn/dry g)")+theme_classic()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+```
+
+```{r, fig.cap="Figura 9. Representación gráfica del modelo con mejor ajuste para explicar las concentraciones de contaminantes."}
+Fit29<-aov(result ~ digestive_tubule_atrophy, data = abcd3)
+abcd3$Pred <- predict(Fit29,abcd3,type="response")
+abcd3$sd<-predict(Fit29,abcd3,se.fit=TRUE)$se.fit
+View(abcd3)
+View(abcd3$sd)
+ggplot(abcd3, aes(x=digestive_tubule_atrophy,y=Pred))+geom_errorbar(aes(ymin=Pred-sd, ymax=Pred+sd))+geom_point()+labs(x = "Atrofia tubular digestiva",y = "Predicción")+theme_classic()
+
+```
+
+
+###Tablas
+
+
+```{r}
+
+Fit1<-aov(length ~ fiscal_year, data = Tarea1)
+Fit2<-aov(length ~ sex, data = Tarea1)
+Fit3<-aov(length ~ fiscal_year+sex, data = Tarea1)
+Fit4<-aov(length ~ fiscal_year*sex, data = Tarea1)
+
+Modelo1 <- glance(Fit1) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit1")
+Modelo2 <- glance(Fit2) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit2")
+Modelo3 <- glance(Fit3) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit3")
+Modelo4 <- glance(Fit3) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit4")
+
+Figura2Modelos <- bind_rows(Modelo1, Modelo2, Modelo3, Modelo4) %>% arrange(AIC) %>% mutate(DeltaAIC = AIC-min(AIC))
+kable(Figura2Modelos,caption="Tabla 1. Indices de ajuste de los modelos de medición del largo de la valva.")
+
+
+Fit5<-aov(digestive_tubule_atrophy ~ fiscal_year, data = Tarea3)
+Fit6<-aov(digestive_tubule_atrophy ~ sex, data = Tarea3)
+Fit7<-aov(digestive_tubule_atrophy ~ length, data = Tarea3)
+Fit8<-aov(digestive_tubule_atrophy ~ general_location, data = Tarea3)
+Fit9<-aov(digestive_tubule_atrophy ~ fiscal_year+sex+length, data = Tarea3)
+Fit10<-aov(digestive_tubule_atrophy ~ fiscal_year+sex+length+general_location, data = Tarea3)
+Fit11<-aov(digestive_tubule_atrophy ~ fiscal_year*sex*length, data = Tarea3)
+Fit12<-aov(digestive_tubule_atrophy ~ fiscal_year*sex*length*general_location, data = Tarea3)
+Fit13<-aov(digestive_tubule_atrophy ~ fiscal_year+sex, data = Tarea3)
+Fit14<-aov(digestive_tubule_atrophy ~ fiscal_year+length, data = Tarea3)
+Fit15<-aov(digestive_tubule_atrophy ~ fiscal_year+general_location, data = Tarea3)
+Fit16<-aov(digestive_tubule_atrophy ~ sex+length, data = Tarea3)
+Fit17<-aov(digestive_tubule_atrophy ~ sex+general_location, data = Tarea3)
+Fit18a<-aov(digestive_tubule_atrophy ~ length+general_location, data = Tarea3)
+Fit19b<-aov(digestive_tubule_atrophy ~ fiscal_year*sex, data = Tarea3)
+Fit20c<-aov(digestive_tubule_atrophy ~ fiscal_year*length, data = Tarea3)
+Fit21d<-aov(digestive_tubule_atrophy ~ sex*length, data = Tarea3)
+Fit22e<-aov(digestive_tubule_atrophy ~ sex*general_location, data = Tarea3)
+Fit23f<-aov(digestive_tubule_atrophy ~ length*general_location, data = Tarea3)
+Fit24g<-aov(digestive_tubule_atrophy ~ fiscal_year*general_location, data = Tarea3)
+
+Modelo5 <- glance(Fit5) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit5")
+Modelo6 <- glance(Fit6) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit6")
+Modelo7 <- glance(Fit7) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit7")
+Modelo8 <- glance(Fit8) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit8")
+Modelo9 <- glance(Fit9) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit9")
+Modelo10 <- glance(Fit10) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit10")
+Modelo13 <- glance(Fit13) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit13")
+Modelo14 <- glance(Fit14) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit14")
+Modelo15 <- glance(Fit15) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit15")
+Modelo16 <- glance(Fit16) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit16")
+Modelo17 <- glance(Fit17) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit17")
+Modelo18a <- glance(Fit18a) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit18a")
+Modelo19b <- glance(Fit19b) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit19b")
+Modelo20c <- glance(Fit20c) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit20c")
+Modelo21d <- glance(Fit21d) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit21d")
+Modelo22e <- glance(Fit22e) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit22e")
+Modelo23f <- glance(Fit23f) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit23f")
+Modelo24g <- glance(Fit24g) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit24g")
+
+Modelos11 <- bind_rows(Modelo5, Modelo6, Modelo7, Modelo8, Modelo9, Modelo10, Modelo13, Modelo14, Modelo15, Modelo16, Modelo17, Modelo18a, Modelo19b, Modelo20c, Modelo21d, Modelo22e, Modelo23f, Modelo24g) %>% arrange(AIC) %>% mutate(DeltaAIC = AIC-min(AIC))
+
+kable(Modelos11,caption="Tabla 2. Indices de ajuste de los modelos de medición de atrofia tubular digestiva.")
+
+Fit18<-aov(result ~ fiscal_year, data = abcd3)
+Fit19<-aov(result ~ general_location, data = abcd3)
+Fit20<-aov(result ~ Contaminante, data = abcd3)
+Fit21<-aov(result ~ general_location+fiscal_year, data = abcd3)
+Fit22<-aov(result ~ general_location+Contaminante, data = abcd3)
+Fit23<-aov(result ~ Contaminante+fiscal_year, data = abcd3)
+Fit24<-aov(result ~ general_location*fiscal_year, data = abcd3)
+Fit25<-aov(result ~ general_location*Contaminante, data = abcd3)
+Fit26<-aov(result ~ Contaminante*fiscal_year, data = abcd3)
+Fit27<-aov(result ~ Contaminante+fiscal_year+general_location, data = abcd3)
+Fit28<-aov(result ~ Contaminante*fiscal_year*general_location, data = abcd3)
+Fit29<-aov(result ~ digestive_tubule_atrophy, data = abcd3)
+Fit30<-aov(result ~ general_location+digestive_tubule_atrophy, data = abcd3)
+Fit31<-aov(result ~ Contaminante+digestive_tubule_atrophy, data = abcd3)
+Fit32<-aov(result ~ digestive_tubule_atrophy+fiscal_year, data = abcd3)
+Fit33<-aov(result ~ general_location*digestive_tubule_atrophy, data = abcd3)
+Fit34<-aov(result ~ Contaminante*digestive_tubule_atrophy, data = abcd3)
+Fit34<-aov(result ~ digestive_tubule_atrophy*fiscal_year, data = abcd3)
+Fit35<-aov(result ~ Contaminante+fiscal_year+general_location+digestive_tubule_atrophy, data = abcd3)
+Fit36<-aov(result ~ Contaminante*fiscal_year*general_location*digestive_tubule_atrophy, data = abcd3)
+
+Modelo18 <- glance(Fit18) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit18")
+Modelo19 <- glance(Fit19) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit19")
+Modelo20 <- glance(Fit20) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit20")
+Modelo21 <- glance(Fit21) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit21")
+Modelo22 <- glance(Fit22) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit22")
+Modelo23 <- glance(Fit23) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit23")
+Modelo24 <- glance(Fit24) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit24")
+Modelo25 <- glance(Fit25) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit25")
+Modelo26 <- glance(Fit26) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit26")
+Modelo27 <- glance(Fit27) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit27")
+Modelo28 <- glance(Fit28) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit28")
+Modelo29 <- glance(Fit29) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit29")
+Modelo30 <- glance(Fit30) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit30")
+Modelo31 <- glance(Fit31) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit31")
+Modelo32 <- glance(Fit32) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit32")
+Modelo33 <- glance(Fit33) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit33")
+Modelo34 <- glance(Fit34) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit34")
+Modelo35 <- glance(Fit35) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit35")
+Modelo36 <- glance(Fit36) %>% dplyr::select(r.squared, AIC) %>% mutate(Modelo = "Fit36")
+
+Modelos111 <- bind_rows(Modelo18, Modelo19, Modelo20, Modelo21, Modelo22, Modelo23, Modelo24, Modelo25, Modelo26, Modelo27, Modelo28, Modelo29, Modelo30, Modelo31, Modelo32, Modelo33, Modelo34, Modelo35, Modelo36) %>% arrange(AIC) %>% mutate(DeltaAIC = AIC-min(AIC))
+
+
+kable(Modelos111,caption="Tabla 3. Indices de ajuste de los modelos de medición de los valores de contaminante.")
+
+```
+
+
+##Bibliografía
